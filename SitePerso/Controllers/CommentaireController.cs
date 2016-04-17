@@ -118,8 +118,15 @@ namespace SitePerso.Controllers
                            select c).FirstOrDefault();
 
                 com.Etat = 1;
-
                 bdd.SaveChanges();
+
+
+                string message = "Bonjour, \n \n votre commentaire : >" + com.Text + " ajouté le " + com.Date + "</b> a été validé et est maintenant visible sur le site sur la page des enregistrements. \n \n Cordialement, \n \n Vos Balls.";
+                string typeCommentaire = com.type == "compos" ? "la musique" : "l'évènement ";
+                string sujet = "Votre commentaire sur " + typeCommentaire + com.Titre + " a bien été validé sur le site.";
+
+                // Envoie de mail au client
+                SitePerso.Helper.EmailHelpers.SendMail(sujet, message, com.Email);
             }
 
             return RedirectToAction("Index", "Commentaire");

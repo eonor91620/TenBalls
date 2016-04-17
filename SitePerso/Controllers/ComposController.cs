@@ -128,7 +128,7 @@ namespace SitePerso.Controllers
                     string sujet = "Nouvelle musique uploader sur le site.";
 
                     // Envoie de mail au groupe
-                    //SitePerso.Helper.EmailHelpers.SendMail(sujet, message);
+                    SitePerso.Helper.EmailHelpers.SendMail(sujet, message);
                     Response.Write("The file has been uploaded.");
                 }
                 catch (Exception ex)
@@ -182,6 +182,13 @@ namespace SitePerso.Controllers
                     bdd.commentairetenballs.Add(commentaire);
                     bdd.SaveChanges();
                 }
+
+                DateTime dateCommentaire = DateTime.Now;
+                string message = "Bonjour, \n \n votre commentaire : <span style=\"font-weight:bold;\">" + c.Texte + "</span> ajouté le " + dateCommentaire + "</b> a bien été prit en compte sur le site. Une confirmation vous sera envoyé lorsque votre commentaire aura été validé par les admins du site. \n \n Cordialement, \n \n Vos Balls.";
+                string sujet = "Votre commentaire sur la musique " + c.Titre + " a bien été prit en compte.";
+
+                // Envoie de mail au client
+                SitePerso.Helper.EmailHelpers.SendMail(sujet, message, c.Email);
             }
             catch (Exception)
             {
@@ -211,7 +218,19 @@ namespace SitePerso.Controllers
 
                     bdd.reponsecommentairetenballs.Add(reponse);
                     bdd.SaveChanges();
+
+                    var commentaire = (from c in bdd.commentairetenballs
+                                       where c.idCommentaire == idCommentaire
+                                       select c).FirstOrDefault();
+
+                    DateTime dateReponse = DateTime.Now;
+                    string message = "Bonjour " +commentaire.nom + ", \n \n Ten Balls a répondu à votre commentaire. \n \n Vous aviez dit : \n " + commentaire.Text+ " \n \n Ten Balls a répondu : \n " + rep.texte+ ". \n \n Vous pouvez désormais voir la réponse publiée sur le site. \n \n Cordialement, \n \n Vos Balls.";
+                    string sujet = "Ten Balls a répondu à votre commentaire.";
+
+                    // Envoie de mail au client
+                    SitePerso.Helper.EmailHelpers.SendMail(sujet, message, commentaire.Email);
                 }
+
             }
             catch (Exception)
             {

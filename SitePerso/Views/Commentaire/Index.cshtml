@@ -20,7 +20,7 @@
                     <div id="contact-section">
                         <h1 onclick="closeCom('attente')" style="cursor:pointer;">
                             Commentaires en attentes
-                            @if (Model.listCommentaireEnAttente.Where(t => t.type == "compos") != null)
+                            @if (Model.listCommentaireEnAttente != null)
                             {
                                 <span>(@Model.listCommentaireEnAttente.Where(t => t.type == "compos").Count())</span>
                             }
@@ -70,7 +70,7 @@
                         <div id="val" hidden>
                             @if (Model.listCommentaireValider != null)
                             {
-                                foreach (var item in Model.listCommentaireValider.Where(f => f.type == "compos"))
+                                foreach (var item in Model.listCommentaireValider.Where(f => f.type == "compos").OrderByDescending(r=>r.Date))
                                 {
                                     <div class="commentaireIndex">
                                         <div class="titreCommentaire">
@@ -107,7 +107,7 @@
                         <div id="sup" hidden>
                             @if (Model.listCommentaireSupprimer != null)
                             {
-                                foreach (var item in Model.listCommentaireSupprimer.Where(f => f.type == "compos"))
+                                foreach (var item in Model.listCommentaireSupprimer.Where(f => f.type == "compos").OrderByDescending(r => r.Date))
                                 {
                                     <div class="commentaireIndex">
                                         <div class="titreCommentaire">
@@ -140,19 +140,12 @@
                     <div id="contact-section">
                         <h1 onclick="closeComEvent('attente')" style="cursor:pointer;">
                         Commentaires en attentes
-                            @if (Model.listCommentaireEnAttente.Where(t => t.type == "event") != null)
-                            {
-                                <span>(@Model.listCommentaireEnAttente.Where(t => t.type == "event").Count())</span>
-                            }
-                            else
-                            {
-                                <span>(0)</span>
-                            }
+
                         </h1>
                         <div id="attEvent" hidden>
                             @if (Model.listCommentaireEnAttente != null)
                             {
-                                foreach (var item in Model.listCommentaireEnAttente.OrderByDescending(m => m.Date).Where(f => f.type == "event"))
+                                foreach (var item in Model.listCommentaireEnAttente.OrderByDescending(m => m.Date).Where(f => f.type == "event").OrderByDescending(r => r.Date))
                                 {
                                     <div class="commentaireIndex">
                                         <div class="titreCommentaire">
@@ -178,19 +171,14 @@
                     <div id="contact-section">
                         <h1 onclick="closeComEvent('valide')" style="cursor:pointer;">
                         Commentaires Validés
-                            @if (Model.listCommentaireValider.Where(t => t.type == "event") != null)
-                            {
+
                                 <span>(@Model.listCommentaireValider.Where(t => t.type == "event").Count())</span>
-                            }
-                            else
-                            {
-                                <span>(0)</span>
-                            }
+
                         </h1>
                         <div id="valEvent" hidden>
                             @if (Model.listCommentaireValider != null)
                             {
-                                foreach (var item in Model.listCommentaireValider.Where(f => f.type == "event"))
+                                foreach (var item in Model.listCommentaireValider.Where(f => f.type == "event").OrderByDescending(r => r.Date))
                                 {
                                     <div class="commentaireIndex">
                                         <div class="titreCommentaire">
@@ -227,7 +215,7 @@
                         <div id="supEvent" hidden>
                             @if (Model.listCommentaireSupprimer != null)
                             {
-                                foreach (var item in Model.listCommentaireSupprimer.Where(f => f.type == "event"))
+                                foreach (var item in Model.listCommentaireSupprimer.Where(f => f.type == "event").OrderByDescending(r => r.Date))
                                 {
                                     <div class="commentaireIndex">
                                         <div class="titreCommentaire">

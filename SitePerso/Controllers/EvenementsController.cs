@@ -142,6 +142,12 @@ namespace SitePerso.Controllers
                     bdd.SaveChanges();
                 }
 
+                string message = "Bonjour, \n \n l'évènement " + evenement.Nom + " a été uploadée sur le site. Vous pouvez désormais le voir sur l'onglet évènement du site. \n \n Cordialement, \n \n Vos Balls.";
+                string sujet = "Nouvel évènement ajouté sur le site.";
+
+                // Envoie de mail au groupe
+                SitePerso.Helper.EmailHelpers.SendMail(sujet, message);
+
                 model.IsUpload = true;
             }
             catch (Exception)

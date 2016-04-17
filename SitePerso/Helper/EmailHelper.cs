@@ -12,7 +12,7 @@ namespace SitePerso.Helper
 {
     public class EmailHelpers
     {
-        public static void SendMail(string sujet, string message)
+        public static void SendMail(string sujet, string message, string email = "")
         {
 
             new SmtpClient
@@ -25,7 +25,7 @@ namespace SitePerso.Helper
                 UseDefaultCredentials = false,
                 Credentials = new NetworkCredential("thomasm282@Gmail.com", "mathi2816")
             }.Send(new MailMessage { From = new MailAddress("thomasm282@Gmail.com", "Ten Balls"),
-                To = { "t.brethiot@free.fr" },
+                To = { email },
                 Subject = sujet,
                 Body = message,
                 BodyEncoding = Encoding.UTF8
