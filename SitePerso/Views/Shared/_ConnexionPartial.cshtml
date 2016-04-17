@@ -1,0 +1,17 @@
+﻿@model SitePerso.Models.ConnexionModel
+<div class="pull-right social-icons">
+    @if (Model.IsConnected)
+    {
+        <h4 class="align">@Model.Id</h4>
+        <a href="@Url.Action("Deconnexion", "Deconnexion")" class="connexion align">Deconnexion</a>
+    }
+    else
+    {
+        <span data-toggle="modal" data-target="#myModal" class="connexion">Se connecter</span>
+
+    }
+    <a href="https://www.facebook.com/tenballsparis/" target="_blank"><i class="fa fa-facebook"></i></a>
+    <a href="#"><i class="fa fa-youtube"></i></a>
+</div>
+
+

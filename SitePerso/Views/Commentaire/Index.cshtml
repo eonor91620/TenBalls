@@ -1,0 +1,322 @@
+﻿@model SitePerso.Models.Commentaire
+@{
+    ViewBag.Title = "Index Commentaire";
+}
+
+@Html.Partial("~/Views/Shared/_HeaderPartial.cshtml", Model.connexion)
+
+<section id="contact">
+    <div class="contact-section">
+        <div class="container">
+            <div class="form-group">
+                @Html.ActionLink("Tous les enregistrements", "Index", "Compos", routeValues: null, htmlAttributes: new { @class = "btn btn-primary" })
+                @Html.ActionLink("Tous les évènements", "Index", "Evenements", routeValues: null, htmlAttributes: new { @class = "btn btn-primary pull-right" })
+            </div>
+            <div class="row-15"></div>
+            <!-- début row-->
+            <fieldset>
+                <legend>Compos</legend>
+                <div class="row">
+                    <div id="contact-section">
+                        <h1 onclick="closeCom('attente')" style="cursor:pointer;">
+                            Commentaires en attentes
+                            @if (Model.listCommentaireEnAttente.Where(t => t.type == "compos") != null)
+                            {
+                                <span>(@Model.listCommentaireEnAttente.Where(t => t.type == "compos").Count())</span>
+                            }
+                            else
+                            {
+                                <span>(0)</span>
+                            }
+                        </h1>
+                        <div id="att" hidden>
+                            @if (Model.listCommentaireEnAttente != null)
+                            {
+                                foreach (var item in Model.listCommentaireEnAttente.OrderByDescending(m => m.Date).Where(f => f.type == "compos"))
+                                {
+                                    <div class="commentaireIndex">
+                                        <div class="titreCommentaire">
+                                            @item.Titre
+                                            <a href="@Url.Action("SupprimerCommentaire", "Commentaire", new { id = item.id })"><i class="fa fa-times iconTimes pull-right" title="Supprimer"></i></a>
+                                            <a href="@Url.Action("ValiderCommentaire", "Commentaire", new { id = item.id })"><i class="fa fa-check iconCheck pull-right" title="Valider"></i></a>
+                                        </div>
+                                        <div class="detailCommentaire">
+                                            Publié par @item.Nom le @item.Date
+                                        </div>
+                                        <div class="textCommentaire">
+                                            @item.Texte
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span style="color:#373737;">Aucun commentaire en attente.</span>
+                            }
+                        </div>
+                    </div>
+                    <div id="contact-section">
+                        <h1 onclick="closeCom('valide')" style="cursor:pointer;">
+                        Commentaires Validés
+                            @if (Model.listCommentaireValider.Where(t => t.type == "compos") != null)
+                            {
+                                <span>(@Model.listCommentaireValider.Where(t => t.type == "compos").Count())</span>
+                            }
+                            else
+                            {
+                                <span>(0)</span>
+                            }
+                        </h1>
+                        <div id="val" hidden>
+                            @if (Model.listCommentaireValider != null)
+                            {
+                                foreach (var item in Model.listCommentaireValider.Where(f => f.type == "compos"))
+                                {
+                                    <div class="commentaireIndex">
+                                        <div class="titreCommentaire">
+                                            @item.Titre
+                                            <a href="@Url.Action("SupprimerCommentaire", "Commentaire", new { id = item.id })"><i class="fa fa-times iconTimes pull-right" title="Supprimer"></i></a>
+                                        </div>
+                                        <div class="detailCommentaire">
+                                            Publié par @item.Nom le @item.Date
+                                        </div>
+                                        <div class="textCommentaire">
+                                            @item.Texte
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span style="color:#373737;">Aucun commentaire validé.</span>
+                            }
+                        </div>
+                    </div>
+                    <div id="contact-section">
+                        <h1 onclick="closeCom('supprimer')" style="cursor:pointer;">
+                            Commentaires Supprimés
+                            @if (Model.listCommentaireSupprimer.Where(t => t.type == "compos") != null)
+                            {
+                                <span>(@Model.listCommentaireSupprimer.Where(t => t.type == "compos").Count())</span>
+                            }
+                            else
+                            {
+                                <span>(0)</span>
+                            }
+                        </h1>
+                        <div id="sup" hidden>
+                            @if (Model.listCommentaireSupprimer != null)
+                            {
+                                foreach (var item in Model.listCommentaireSupprimer.Where(f => f.type == "compos"))
+                                {
+                                    <div class="commentaireIndex">
+                                        <div class="titreCommentaire">
+                                            @item.Titre
+                                            <a href="@Url.Action("ValiderCommentaire", "Commentaire", new { id = item.id })"><i class="fa fa-check iconCheck pull-right" title="Valider"></i></a>
+                                        </div>
+                                        <div class="detailCommentaire">
+                                            Publié par @item.Nom le @item.Date
+                                        </div>
+                                        <div class="textCommentaire">
+                                            @item.Texte
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span style="color:#373737;">Aucun commentaire supprimé.</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <!-- Fin row-->
+            </fieldset>
+            <!-- début row-->
+            <div class="row-30"></div>
+            <fieldset>
+                <legend>Evènement</legend>
+                <div class="row">
+                    <div id="contact-section">
+                        <h1 onclick="closeComEvent('attente')" style="cursor:pointer;">
+                        Commentaires en attentes
+                            @if (Model.listCommentaireEnAttente.Where(t => t.type == "event") != null)
+                            {
+                                <span>(@Model.listCommentaireEnAttente.Where(t => t.type == "event").Count())</span>
+                            }
+                            else
+                            {
+                                <span>(0)</span>
+                            }
+                        </h1>
+                        <div id="attEvent" hidden>
+                            @if (Model.listCommentaireEnAttente != null)
+                            {
+                                foreach (var item in Model.listCommentaireEnAttente.OrderByDescending(m => m.Date).Where(f => f.type == "event"))
+                                {
+                                    <div class="commentaireIndex">
+                                        <div class="titreCommentaire">
+                                            @item.Titre
+                                            <a href="@Url.Action("SupprimerCommentaire", "Commentaire", new { id = item.id })"><i class="fa fa-times iconTimes pull-right" title="Supprimer"></i></a>
+                                            <a href="@Url.Action("ValiderCommentaire", "Commentaire", new { id = item.id })"><i class="fa fa-check iconCheck pull-right" title="Valider"></i></a>
+                                        </div>
+                                        <div class="detailCommentaire">
+                                            Publié par @item.Nom le @item.Date
+                                        </div>
+                                        <div class="textCommentaire">
+                                            @item.Texte
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span style="color:#373737;">Aucun commentaire en attente.</span>
+                            }
+                        </div>
+                    </div>
+                    <div id="contact-section">
+                        <h1 onclick="closeComEvent('valide')" style="cursor:pointer;">
+                        Commentaires Validés
+                            @if (Model.listCommentaireValider.Where(t => t.type == "event") != null)
+                            {
+                                <span>(@Model.listCommentaireValider.Where(t => t.type == "event").Count())</span>
+                            }
+                            else
+                            {
+                                <span>(0)</span>
+                            }
+                        </h1>
+                        <div id="valEvent" hidden>
+                            @if (Model.listCommentaireValider != null)
+                            {
+                                foreach (var item in Model.listCommentaireValider.Where(f => f.type == "event"))
+                                {
+                                    <div class="commentaireIndex">
+                                        <div class="titreCommentaire">
+                                            @item.Titre
+                                            <a href="@Url.Action("SupprimerCommentaire", "Commentaire", new { id = item.id })"><i class="fa fa-times iconTimes pull-right" title="Supprimer"></i></a>
+                                        </div>
+                                        <div class="detailCommentaire">
+                                            Publié par @item.Nom le @item.Date
+                                        </div>
+                                        <div class="textCommentaire">
+                                            @item.Texte
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span style="color:#373737;">Aucun commentaire validé.</span>
+                            }
+                        </div>
+                    </div>
+                    <div id="contact-section">
+                        <h1 onclick="closeComEvent('supprimer')" style="cursor:pointer;">
+                            Commentaires Supprimés
+                            @if (Model.listCommentaireSupprimer.Where(t => t.type == "event") != null)
+                            {
+                                <span>(@Model.listCommentaireSupprimer.Where(t=>t.type=="event").Count())</span>
+                            }
+                            else
+                            {
+                                <span>(0)</span>
+                            }
+                        </h1>
+                        <div id="supEvent" hidden>
+                            @if (Model.listCommentaireSupprimer != null)
+                            {
+                                foreach (var item in Model.listCommentaireSupprimer.Where(f => f.type == "event"))
+                                {
+                                    <div class="commentaireIndex">
+                                        <div class="titreCommentaire">
+                                            @item.Titre
+                                            <a href="@Url.Action("ValiderCommentaire", "Commentaire", new { id = item.id })"><i class="fa fa-check iconCheck pull-right" title="Valider"></i></a>
+                                        </div>
+                                        <div class="detailCommentaire">
+                                            Publié par @item.Nom le @item.Date
+                                        </div>
+                                        <div class="textCommentaire">
+                                            @item.Texte
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span style="color:#373737;">Aucun commentaire supprimé.</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <!-- Fin row-->
+            </fieldset>
+        </div>
+</section>
+
+<script>
+    function closeCom(statut) {
+        var att = document.getElementById("att");
+        var valide = document.getElementById("val");
+        var supprime = document.getElementById("sup");
+
+        if (statut == "attente") {
+            if (att.hidden == true) {
+                att.hidden = false;
+            } else {
+                att.hidden = true;
+            }
+        }
+
+        if (statut == "valide") {
+            if (valide.hidden == true) {
+                valide.hidden = false;
+            } else {
+                valide.hidden = true;
+            }
+        }
+
+        if (statut == "supprimer") {
+            if (supprime.hidden == true) {
+                supprime.hidden = false;
+            } else {
+                supprime.hidden = true;
+            }
+        }
+    }
+
+
+    function closeComEvent(statut) {
+        var att = document.getElementById("attEvent");
+        var valide = document.getElementById("valEvent");
+        var supprime = document.getElementById("supEvent");
+
+        if (statut == "attente") {
+            if (att.hidden == true) {
+                att.hidden = false;
+            } else {
+                att.hidden = true;
+            }
+        }
+
+        if (statut == "valide") {
+            if (valide.hidden == true) {
+                valide.hidden = false;
+            } else {
+                valide.hidden = true;
+            }
+        }
+
+        if (statut == "supprimer") {
+            if (supprime.hidden == true) {
+                supprime.hidden = false;
+            } else {
+                supprime.hidden = true;
+            }
+        }
+    }
+</script>
+
+
+

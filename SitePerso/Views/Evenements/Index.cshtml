@@ -1,0 +1,175 @@
+﻿@model SitePerso.Models.EvenementsModel
+@{
+    ViewBag.Title = "Evenements";
+}
+
+
+@Html.Partial("~/Views/Shared/_HeaderPartial.cshtml", Model.connexion)
+
+<section id="explore">
+    <div class="container">
+        <div class="row">
+            <div class="watch">
+                <img class="img-responsive" src="~/Content/Images/watch.png" alt="">
+            </div>
+            <div class="col-sm-3 col-sm-offset-4">
+            </div>
+        </div>
+        <div class="row">
+            <h3>Liste des évènements
+            </h3>
+            @foreach (var item in Model.listEvenement.OrderBy(m=>m.Date)) { 
+                <div class="col-sm-4">
+                    <span>@item.Nom</span>
+                </div>
+                <div class="col-sm-4">
+                    <span>@item.Date</span>
+                </div>
+                <div class="col-sm-4">
+                    <span>@item.Detail</span>
+                </div>
+            }
+
+        </div>
+        <div class="row-30"></div>
+        <div class="row">
+            <div id="contact-section">
+                @if (Model.listCommentaire != null)
+                {
+                    foreach (var item in Model.listCommentaire.OrderByDescending(m => m.Date))
+                    {
+                        <div class="commentaire">
+                            <div class="titreCommentaire">
+                                @item.Titre
+                            </div>
+                            <div class="detailCommentaire">
+                                Publié par @item.Nom le @item.Date
+                            </div>
+                            <div class="textCommentaire">
+                                @item.Texte
+                            </div>
+                            @if (Model.listReponseCommentaire != null)
+                            {
+                                foreach (var resp in Model.listReponseCommentaire.Where(m => m.idCommentaire == item.id).OrderByDescending(f => f.date))
+                                {
+                                    <div class="reponseCommentaire">
+                                        <div class="titreReponse">
+                                            Ten Balls a répondu :
+                                            @if (Model.connexion.IsConnected)
+                                            {
+                                                <a href="@Url.Action("SupprimerReponse", "Commentaire", new { id = resp.idReponse, univers = "Evenements" })"><i class="fa fa-times iconTimes pull-right" title="Supprimer"></i></a>
+                                                    <i class="fa fa-pencil iconPencil pull-right" title="Modifier" onclick="modifReponse(@resp.idReponse)"></i>
+                                            }
+                                        </div>
+                                        <div>
+                                            le @resp.date
+                                        </div>
+                                        <div id="reponseText-@resp.idReponse" class="textReponse">
+                                            @resp.texte
+                                        </div>
+                                        <div id="inputReponseText-@resp.idReponse" hidden>
+                                            @using (Html.BeginForm("ModifierReponse", "Commentaire", new { id = resp.idReponse, univers = "Evenements" }, FormMethod.Post, new { idCommentaire = "reponceCom" }))
+                                            {
+                                                <div class="form-group">
+                                                    <textarea name="Texte" required="required" class="form-control" rows="4">@resp.texte</textarea>
+                                                </div>
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-primary">Modifier</button>
+                                                        <button type="button" class="btn btn-primary" onclick="annulerModifReponse('@resp.idReponse')">Annuler</button>
+
+                                                    </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+                            @if (Model.connexion.IsConnected)
+                            {
+                                <div class="reponse">
+                                    <span onclick="reponse('@item.id')">Répondre</span>
+                                </div>
+                            }
+                            <div id="reponseCommentaire-@item.id" hidden>
+                                @using (Html.BeginForm("NewReponse", "Evenements", new { idCommentaire = item.id }, FormMethod.Post, new { idCommentaire = "reponceCom" }))
+                                {
+                                    <div class="form-group">
+                                        <textarea name="Texte" required="required" class="form-control" rows="4" placeholder="Commentaire (obligatoire)"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">Répondre</button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+
+            </div>
+            <div class="row">
+                @using (Html.BeginForm("NewCommentaire", "Evenements", FormMethod.Post, new { @id = "commentaire" }))
+                {
+                    <div id="contact-section">
+                        <h3>
+                            Laissez un commentaire
+                        </h3>
+                        <div class="status alert alert-success" style="display: none"></div>
+                        <div class="form-group">
+                            <input type="text" name="Nom" class="form-control" required="required" placeholder="Nom (obligatoire)">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="Email" class="form-control" required="required" placeholder="Email (obligatoire)">
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group">
+                                <select class="form-control" name="Titre">
+                                    <option style="display:none">Sur quel évènement laissez-vous un commentaire ?</option>
+                                    @foreach (var item in Model.listEvenement)
+                                    {
+                                        <option name="Titre">@item.Nom</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="Texte" required="required" class="form-control" rows="4" placeholder="Commentaire (obligatoire)"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary pull-right">Ajouter le commentaire</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        @if (Model.connexion.IsConnected)
+        {
+            <div class="cart">
+                <a href="@Url.Action("Index", "Commentaire")"><i class="fa fa-plus"></i> <span>Les Commentaires</span></a>
+            </div>
+        }
+    </div>
+</section><!--/#explore-->
+
+<script>
+    function reponse(id) {
+        var com = document.getElementById("reponseCommentaire-"+ id);
+        com.hidden = false;
+    }
+
+    function modifReponse(id) {
+        var rep = document.getElementById("reponseText-" + id);
+        rep.hidden = true;
+
+        var inputRep = document.getElementById("inputReponseText-" + id)
+        inputRep.hidden = false;
+    }
+
+    function annulerModifReponse(id) {
+        var rep = document.getElementById("reponseText-" + id);
+        rep.hidden = false;
+
+        var inputRep = document.getElementById("inputReponseText-" + id)
+        inputRep.hidden = true;
+    }
+
+</script>

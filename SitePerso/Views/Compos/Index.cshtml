@@ -1,0 +1,218 @@
+﻿@model SitePerso.Models.ComposModel
+@{
+    ViewBag.Title = "Compos";
+}
+
+@Html.Partial("~/Views/Shared/_HeaderPartial.cshtml", Model.connexion)
+
+<section id="contact">
+    <div class="contact-section">
+        <div class="ear-piece">
+            <img class="img-responsive" src="~/Content/Images/ear-piece.png" alt="">
+        </div>
+        <div class="container">
+            <div class="row">
+                <div id="contact-section">
+                    <h3 style="text-align:center">
+                        Tous les enregistrements
+                    </h3>
+                    <div class="form-group">
+                        <center>
+                            <table>
+                                @foreach (var item in Model.listNomCompos)
+                                {
+                                    <tr>
+                                        <td>
+                                            <h3 style="font-size:20px; margin-right:20px; width:100px;">@item.Substring(17).Replace(".mp3", "")</h3>
+                                        </td>
+                                        <td>
+                                            <audio controls="controls">
+                                                <source src="~/Content/Audio/@item" type="audio/mp3" />
+                                                Votre navigateur n'est pas compatible
+                                            </audio>
+                                        </td>
+                                        <td>
+                                            <h3 style="margin-left:20px; font-size:20px;">@item.Substring(0, 17).Replace("-", " ").Replace("_", ":")</h3>
+                                        </td>
+                                        @if (Model.connexion.IsConnected)
+                                        {
+                                            <td>
+                                                <i class="fa fa-times iconTimes" data-toggle="modal" data-target="#confirm-delete-@item.Replace(".mp3", "").Replace(" ", "")"></i>
+                                                <div class="modal fade" id="confirm-delete-@item.Replace(".mp3", "").Replace(" ", "")" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-body">
+                                                                <center><h1 style="color:black;">Etes-vous sur ?</h1></center>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                @using (Html.BeginForm("suppressionCompos", "Compos", FormMethod.Post, new { @id = "suppression" }))
+                                                                {
+                                                                    <input type="hidden" name="nom" value="@item" />
+                                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Non</button>
+                                                                    <button type="submit" name="IsDelete" value="true" class="btn btn-danger btn-ok">Oui</button>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="~/Content/Audio/@item" download> <i class="fa fa-download" style="margin-left:20px;"></i></a>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+
+                            </table>
+                        </center>
+                    </div>
+                </div>
+            </div>
+            <div class="row-30"></div>
+            <div class="row">
+                <div id="contact-section">
+                    @if (Model.listCommentaire != null)
+                    {
+                        foreach (var item in Model.listCommentaire.OrderByDescending(m=>m.Date))
+                        {
+                            <div class="commentaire">
+                                <div class="titreCommentaire">
+                                    @item.Titre
+                                </div>
+                                <div class="detailCommentaire">
+                                    Publié par @item.Nom le @item.Date
+                                </div>
+                                <div class="textCommentaire">
+                                    @item.Texte
+                                </div>
+                                @if (Model.listReponseCommentaire != null)
+                                {
+                                    foreach (var resp in Model.listReponseCommentaire.Where(m=>m.idCommentaire == item.id).OrderByDescending(f=>f.date))
+                                    {
+                                        <div class="reponseCommentaire">
+                                            <div class="titreReponse">
+                                                Ten Balls a répondu : 
+                                                @if (Model.connexion.IsConnected)
+                                                {
+                                                    <a href="@Url.Action("SupprimerReponse", "Commentaire", new { id = resp.idReponse, univers = "compos" })"><i class="fa fa-times iconTimes pull-right" title="Supprimer"></i></a>
+                                                    <i class="fa fa-pencil iconPencil pull-right" title="Modifier" onclick="modifReponse(@resp.idReponse)"></i>
+                                                }
+                                            </div>
+                                            <div>
+                                                le @resp.date
+                                            </div>
+                                            <div id="reponseText-@resp.idReponse" class="textReponse">
+                                                @resp.texte
+                                            </div>
+                                            <div id="inputReponseText-@resp.idReponse" hidden>
+                                                @using (Html.BeginForm("ModifierReponse", "Commentaire", new { id = resp.idReponse, univers = "compos" }, FormMethod.Post, new { idCommentaire = "reponceCom" }))
+                                                {
+                                                    <div class="form-group">
+                                                        <textarea name="Texte" required="required" class="form-control" rows="4" >@resp.texte</textarea>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-primary">Modifier</button>
+                                                        <button type="button" class="btn btn-primary" onclick="annulerModifReponse('@resp.idReponse')">Annuler</button>
+
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                }
+
+                                @if (Model.connexion.IsConnected)
+                                {
+                                    <div class="reponse">
+                                        <span onclick="reponse('@item.id')">Répondre</span>
+                                    </div>
+                                }
+                                <div id="reponseCommentaire-@item.id" hidden>
+                                    @using (Html.BeginForm("NewReponse", "Compos", new { idCommentaire = item.id }, FormMethod.Post, new { idCommentaire = "reponceCom" }))
+                                    {
+                                    <div class="form-group">
+                                        <textarea name="Texte" required="required" class="form-control" rows="4" placeholder="Commentaire (obligatoire)"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">Répondre</button>
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+
+                </div>
+            <div class="row">
+                @using (Html.BeginForm("NewCommentaire", "Compos", FormMethod.Post, new { @id = "commentaire" }))
+                {
+                    <div id="contact-section">
+                        <h3>
+                            Laissez un commentaire
+                        </h3>
+                        <div class="status alert alert-success" style="display: none"></div>
+                        <div class="form-group">
+                                <input type="text" name="Nom" class="form-control" required="required" placeholder="Nom (obligatoire)">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="Email" class="form-control" required="required" placeholder="Email (obligatoire)">
+                        </div>
+                        <div class="form-group">
+                            <div class="form-group">
+                                <select class="form-control" name="Titre">
+                                    <option style="display:none">Sur quel enregistrement laissez-vous un commentaire ?</option>
+                                    @foreach (var item in Model.listNomCompos)
+                                    {
+                                        <option name="Titre">@item.Substring(17).Replace(".mp3", "")</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="Texte" required="required" class="form-control" rows="4" placeholder="Commentaire (obligatoire)"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary pull-right">Ajouter le commentaire</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        @if (Model.connexion.IsConnected)
+        {
+            <div class="cart">
+                <a href="@Url.Action("Index", "Commentaire")"><i class="fa fa-plus"></i> <span>Les Commentaires</span></a>
+            </div>
+        }
+    </div>
+        </div>
+</section>
+
+
+<script>
+    function reponse(id) {
+        var com = document.getElementById("reponseCommentaire-"+ id);
+        com.hidden = false;
+    }
+
+    function modifReponse(id) {
+        var rep = document.getElementById("reponseText-" + id);
+        rep.hidden = true;
+
+        var inputRep = document.getElementById("inputReponseText-" + id)
+        inputRep.hidden = false;
+    }
+
+    function annulerModifReponse(id) {
+        var rep = document.getElementById("reponseText-" + id);
+        rep.hidden = false;
+
+        var inputRep = document.getElementById("inputReponseText-" + id)
+        inputRep.hidden = true;
+    }
+
+</script>
+
+
+
+

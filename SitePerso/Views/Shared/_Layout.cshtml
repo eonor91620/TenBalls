@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Mon application ASP.NET</title>
+    @Styles.Render("~/Content/css")
+
+</head>
+<body>
+    @{ string date = DateTime.Now.Year.ToString();
+        
+    }
+
+        @RenderBody()
+        <hr />
+        <footer id="footer">
+            <div class="container">
+                <div class="text-center">
+                    <p> Copyright  &copy;@date. <span style="color:#f7ab24;">Ten Balls</span></p>
+                </div>
+            </div>
+        </footer>
+        <!--/#footer-->
+
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
