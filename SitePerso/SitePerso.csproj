@@ -352,6 +352,7 @@
     <Content Include="Views\Shared\_ConnexionPartial.cshtml" />
     <Content Include="Views\Evenements\NewEvenements.cshtml" />
     <Content Include="Views\Commentaire\Index.cshtml" />
+    <Content Include="Views\Compos\test.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
